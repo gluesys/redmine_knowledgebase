@@ -30,6 +30,14 @@ module Macros
       link_to_article_with_title(article)
     end
 
+    desc "Knowledge base Article link Macro, using the article_title# format"
+    macro :article_title do |obj, args|
+      args, options = extract_macro_options(args, :parent)
+      raise 'No or bad arguments.' if args.size != 1
+      article = KbArticle.find(args.first)
+      link_to_article_with_title_only(article)
+    end
+
     desc "Knowledge base Category link Macro, using the category# format"
     macro :category do |obj, args|
       args, options = extract_macro_options(args, :parent)

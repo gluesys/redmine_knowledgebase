@@ -89,6 +89,10 @@ class KbArticle < ActiveRecord::Base
     notified.collect(&:mail)
   end
 
+  def editable?(user = User.current)
+    editable_by?(user)
+  end
+
   def editable_by?(user = User.current)
     return user.allowed_to?(:edit_articles, self.project) ||
       user.allowed_to?(:manage_articles, self.project) ||

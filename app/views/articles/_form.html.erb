@@ -14,7 +14,6 @@
     });
 </script>
 
-
 <div class="box tabular">
 <p>
 <label for="category_id"><%= l(:label_category) %></label>
@@ -26,30 +25,45 @@
   <p><%= f.text_area :summary, :cols => 60, :rows => 5, :label => l(:label_summary) %></p>
 <% end %>
 
-<p><%= f.text_area :content, :cols => 60, :rows => 15, :class => 'wiki-edit', :label => l(:label_content) %></p>
-
 <p><%= f.text_field :tag_list, :size => 80, :value => "#{@article.tag_list.join(",")}" %></p>
 
 <p><%= f.text_field :version_comments, :size => 120, :label => l(:field_version_comments) %></p>
 </div>
 
-<% if @article.attachments.exists? %>
-<div class="box">
-  <p><label><%= l(:label_attachment_plural) %></label>
-    <%= link_to_attachments @article,
-	:thumbnails => true,
-        :author => false %>
-  </p>
+<div class="box tabular">
+
+<%= f.text_area :content, :cols => 100, :rows => 25, :class => 'wiki-edit' %>
+
+<% if redmine_knowledgebase_settings_value(:show_thumbnails_for_articles) %>
+  <%= l(:thumbnail_explanation) %>
+<% end %>
+
+<fieldset>
+<legend><%=l(:label_attachment_plural)%></legend>
+<% if @article.attachments.any? && @article.safe_attribute?('deleted_attachment_ids') %>
+<div class="contextual"><%= link_to l(:label_edit_attachments), '#', :onclick => "$('#existing-attachments').toggle(); return false;" %></div>
+<div id="existing-attachments" style="<%= @article.deleted_attachment_ids.blank? ? 'display:none;' : '' %>">
+  <% @article.attachments.each do |attachment| %>
+  <span class="existing-attachment">
+    <%= text_field_tag '', attachment.filename, :class => "icon icon-attachment filename", :disabled => true %>
+    <label class='inline'>
+      <%= check_box_tag 'wiki_page[deleted_attachment_ids][]',
+                        attachment.id,
+                        @article.deleted_attachment_ids.include?(attachment.id),
+                        :id => nil, :class => "deleted_attachment" %> <%= l(:button_delete) %>
+    </label>
+  </span>
+  <% end %>
+  <hr />
 </div>
 <% end %>
 
-<% if redmine_knowledgebase_settings_value(:show_thumbnails_for_articles) %>
-  <p><%= l(:thumbnail_explanation) %></p>
-<% end %>
+<div id="new-attachments" style="display:inline-block;">
+  <%= render :partial => 'attachments/form' %>
+</div>
 
+</fieldset>
 
-<div class="box">
-<p><label><%=l(:label_attachment_add)%></label><%= render :partial => 'attachments/form' %></p>
 </div>
 
 <%= wikitoolbar_for 'article_content' %>

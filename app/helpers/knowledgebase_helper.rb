@@ -170,7 +170,7 @@ module KnowledgebaseHelper
     thumb = get_article_thumbnail( article )
 
     if thumb
-      return thumbnail_path(thumb)
+      return thumbnail_url(thumb)
     else
       return ''
     end
@@ -186,7 +186,5 @@ module KnowledgebaseHelper
       return ''
     end
   end
-
-
 end
 
